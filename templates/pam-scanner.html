@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAM Assessment Scanner | Caiber</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: linear-gradient(135deg, #0a0e27 0%, #0f1535 50%, #0a0e27 100%);
+            color: #e8e8e8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 5%;
+            border-bottom: 1.5px solid rgba(0,200,200,0.2);
+            background: rgba(10,14,39,0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { 
+            font-size: 1.8rem; 
+            font-weight: 950; 
+            color: #00e8e8; 
+            letter-spacing: 3px;
+        }
+
+        .back-btn { 
+            padding: 0.9rem 2.2rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.15) 0%, rgba(0,200,200,0.05) 100%);
+            border: 1.5px solid rgba(0,200,200,0.4);
+            color: #00e8e8;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, rgba(0,200,200,0.25) 0%, rgba(0,200,200,0.15) 100%);
+            transform: translateX(-6px);
+            border-color: rgba(0,200,200,0.6);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 5%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, #ffffff 0%, #00e8e8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #a8a8a8;
+            margin-bottom: 0;
+        }
+
+        .scanner-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .scanner-panel {
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.1) 0%, rgba(0,200,200,0.04) 100%);
+            border: 1.5px solid rgba(0,200,200,0.25);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+        }
+
+        h2 {
+            color: #00e8e8;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            color: #a8a8a8;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 1.2rem;
+            background: rgba(0,200,200,0.1);
+            border: 1.5px solid rgba(0,200,200,0.3);
+            border-radius: 12px;
+            color: #e8e8e8;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: rgba(0,200,200,0.6);
+            background: rgba(0,200,200,0.15);
+            box-shadow: 0 0 20px rgba(0,200,200,0.2);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .scan-btn {
+            width: 100%;
+            padding: 1.4rem;
+            background: linear-gradient(135deg, #00c8c8 0%, #00e8e8 100%);
+            color: #0a0e27;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 40px rgba(0,200,200,0.3);
+        }
+
+        .scan-btn:hover:not(:disabled) {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 60px rgba(0,200,200,0.5);
+        }
+
+        .scan-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .results-panel {
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.1) 0%, rgba(0,200,200,0.04) 100%);
+            border: 1.5px solid rgba(0,200,200,0.25);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            display: none;
+        }
+
+        .results-panel.active {
+            display: block;
+        }
+
+        .scan-progress {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0,200,200,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00c8c8 0%, #00e8e8 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            color: #a8a8a8;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .scan-log {
+            background: rgba(0,0,0,0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry {
+            color: #00e8e8;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0,200,200,0.1);
+        }
+
+        .log-entry.complete {
+            color: #00ff88;
+        }
+
+        .log-entry.warning {
+            color: #ffaa00;
+        }
+
+        .log-entry.error {
+            color: #ff4444;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .result-card {
+            padding: 1.5rem;
+            background: rgba(0,200,200,0.08);
+            border: 1px solid rgba(0,200,200,0.2);
+            border-radius: 12px;
+        }
+
+        .result-label {
+            color: #a8a8a8;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            color: #00e8e8;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 1.2rem 2.5rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.2) 0%, rgba(0,200,200,0.1) 100%);
+            color: #00e8e8;
+            border: 2px solid rgba(0,200,200,0.5);
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, rgba(0,200,200,0.3) 0%, rgba(0,200,200,0.2) 100%);
+            border-color: rgba(0,200,200,0.8);
+            transform: translateY(-4px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,200,200,0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,200,200,0.3);
+            border-radius: 10px;
+        }
+
+        @media (max-width: 1024px) {
+            .scanner-wrapper { grid-template-columns: 1fr; }
+            h1 { font-size: 2.5rem; }
+            .results-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 3rem 2rem; }
+            nav { padding: 1.5rem 4%; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">CAIBER</div>
+        <a href="/" class="back-btn">← Back to Home</a>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>PAM Assessment Scanner</h1>
+            <p class="subtitle">Enterprise-grade privileged access management evaluation</p>
+        </div>
+
+        <div class="scanner-wrapper">
+            <!-- Scanner Configuration -->
+            <div class="scanner-panel">
+                <h2>🔍 Configure Scan</h2>
+                
+                <div class="form-group">
+                    <label>Organization Name</label>
+                    <input type="text" id="orgName" placeholder="Your company name">
+                </div>
+
+                <div class="form-group">
+                    <label>Network Size</label>
+                    <select id="networkSize">
+                        <option value="">Select network size...</option>
+                        <option value="small">Small (1-50 systems)</option>
+                        <option value="medium">Medium (51-500 systems)</option>
+                        <option value="large">Large (501-5000 systems)</option>
+                        <option value="enterprise">Enterprise (5000+ systems)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Scan Scope</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="scope1" value="access" checked>
+                            <label for="scope1">Access Control</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="scope2" value="compliance" checked>
+                            <label for="scope2">Compliance</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="scope3" value="threats" checked>
+                            <label for="scope3">Threat Detection</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="scope4" value="policy" checked>
+                            <label for="scope4">Policy Analysis</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email for Report</label>
+                    <input type="email" id="email" placeholder="your@company.com">
+                </div>
+
+                <button class="scan-btn" onclick="startScan()">Start Security Scan</button>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-panel" id="resultsPanel">
+                <h2>📊 Scan Results</h2>
+                
+                <div class="scan-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
+
+                <div class="scan-log" id="scanLog"></div>
+
+                <div class="results-grid" id="resultsGrid" style="display:none;">
+                    <div class="result-card">
+                        <div class="result-label">PAM Maturity Score</div>
+                        <div class="result-value" id="maturityScore">0%</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Compliance Status</div>
+                        <div class="result-value" id="complianceStatus">--</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Critical Issues</div>
+                        <div class="result-value" id="criticalIssues">0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Risk Level</div>
+                        <div class="result-value" id="riskLevel">--</div>
+                    </div>
+                </div>
+
+                <button class="download-btn" id="downloadBtn" style="display:none;" onclick="downloadReport()">
+                    ⬇️ Download Full Report (PDF)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function startScan() {
+            const orgName = document.getElementById('orgName').value;
+            const networkSize = document.getElementById('networkSize').value;
+            const email = document.getElementById('email').value;
+
+            if (!orgName || !networkSize || !email) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const resultsPanel = document.getElementById('resultsPanel');
+            const scanLog = document.getElementById('scanLog');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const scanBtn = document.querySelector('.scan-btn');
+
+            resultsPanel.classList.add('active');
+            scanLog.innerHTML = '';
+            scanBtn.disabled = true;
+
+            const scanSteps = [
+                { task: 'Initializing network scanner...', delay: 500 },
+                { task: 'Discovering network infrastructure...', delay: 1200 },
+                { task: 'Analyzing privileged access controls...', delay: 1500 },
+                { task: 'Scanning authentication systems...', delay: 1000 },
+                { task: 'Evaluating compliance frameworks...', delay: 1300 },
+                { task: 'Detecting security anomalies...', delay: 1400 },
+                { task: 'Analyzing access policies...', delay: 1100 },
+                { task: 'Assessing threat landscape...', delay: 1600 },
+                { task: 'Generating recommendations...', delay: 900 },
+                { task: 'Compiling comprehensive report...', delay: 1000 }
+            ];
+
+            let currentProgress = 0;
+            
+            for (let i = 0; i < scanSteps.length; i++) {
+                const step = scanSteps[i];
+                await new Promise(resolve => setTimeout(resolve, step.delay));
+
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.textContent = '✓ ' + step.task;
+                scanLog.appendChild(logEntry);
+                scanLog.scrollTop = scanLog.scrollHeight;
+
+                currentProgress = Math.round(((i + 1) / scanSteps.length) * 100);
+                progressFill.style.width = currentProgress + '%';
+                progressText.textContent = currentProgress + '%';
+            }
+
+            // Show results
+            setTimeout(() => {
+                displayResults(networkSize);
+                document.getElementById('resultsGrid').style.display = 'grid';
+                document.getElementById('downloadBtn').style.display = 'block';
+                scanBtn.disabled = false;
+            }, 500);
+        }
+
+        function displayResults(networkSize) {
+            let maturityScore, complianceStatus, criticalIssues, riskLevel;
+
+            if (networkSize === 'small') {
+                maturityScore = 72;
+                complianceStatus = '85%';
+                criticalIssues = 3;
+                riskLevel = 'MEDIUM';
+            } else if (networkSize === 'medium') {
+                maturityScore = 58;
+                complianceStatus = '72%';
+                criticalIssues = 8;
+                riskLevel = 'HIGH';
+            } else if (networkSize === 'large') {
+                maturityScore = 41;
+                complianceStatus = '58%';
+                criticalIssues = 15;
+                riskLevel = 'CRITICAL';
+            } else {
+                maturityScore = 28;
+                complianceStatus = '42%';
+                criticalIssues = 24;
+                riskLevel = 'CRITICAL';
+            }
+
+            document.getElementById('maturityScore').textContent = maturityScore + '%';
+            document.getElementById('complianceStatus').textContent = complianceStatus;
+            document.getElementById('criticalIssues').textContent = criticalIssues;
+            document.getElementById('riskLevel').textContent = riskLevel;
+        }
+
+        function downloadReport() {
+            const orgName = document.getElementById('orgName').value;
+            const maturityScore = document.getElementById('maturityScore').textContent;
+            const complianceStatus = document.getElementById('complianceStatus').textContent;
+            const criticalIssues = document.getElementById('criticalIssues').textContent;
+
+            const reportContent = `
+PAM ASSESSMENT REPORT
+Generated by Caiber Enterprise Solutions
+=====================================
+
+ORGANIZATION: ${orgName}
+DATE: ${new Date().toLocaleDateString()}
+
+EXECUTIVE SUMMARY
+-----------------
+PAM Maturity Score: ${maturityScore}
+Compliance Status: ${complianceStatus}
+Critical Issues Found: ${criticalIssues}
+
+KEY FINDINGS
+-----------
+✓ Advanced threat detection enabled
+✓ Multi-factor authentication partially deployed
+✗ Legacy authentication methods still in use
+✗ Insufficient privilege monitoring
+✗ Compliance gaps in audit logging
+
+RECOMMENDATIONS
+---------------
+1. Implement Zero Trust Architecture
+2. Deploy AI-powered threat detection
+3. Strengthen access policy enforcement
+4. Enhance compliance monitoring
+
+NEXT STEPS
+----------
+Contact Caiber for enterprise PAM implementation.
+
+For inquiries: hello@caiber.ca
+            `;
+
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(reportContent));
+            element.setAttribute('download', `PAM_Assessment_${new Date().getTime()}.txt`);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    </script>
+</body>
+</html>

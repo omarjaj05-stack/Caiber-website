@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI Calculator | Caiber</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: linear-gradient(135deg, #0a0e27 0%, #0f1535 50%, #0a0e27 100%);
+            color: #e8e8e8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 5%;
+            border-bottom: 1.5px solid rgba(0,200,200,0.2);
+            background: rgba(10,14,39,0.95);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { 
+            font-size: 1.8rem; 
+            font-weight: 950; 
+            color: #00e8e8; 
+            letter-spacing: 3px;
+        }
+
+        .back-btn { 
+            padding: 0.9rem 2.2rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.15) 0%, rgba(0,200,200,0.05) 100%);
+            border: 1.5px solid rgba(0,200,200,0.4);
+            color: #00e8e8;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, rgba(0,200,200,0.25) 0%, rgba(0,200,200,0.15) 100%);
+            transform: translateX(-6px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 5%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, #ffffff 0%, #00e8e8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #a8a8a8;
+        }
+
+        .calculator-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .panel {
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.1) 0%, rgba(0,200,200,0.04) 100%);
+            border: 1.5px solid rgba(0,200,200,0.25);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+        }
+
+        h2 {
+            color: #00e8e8;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            color: #a8a8a8;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 1.2rem;
+            background: rgba(0,200,200,0.1);
+            border: 1.5px solid rgba(0,200,200,0.3);
+            border-radius: 12px;
+            color: #e8e8e8;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: rgba(0,200,200,0.6);
+            background: rgba(0,200,200,0.15);
+        }
+
+        select option {
+            background: #0a0e27;
+            color: #e8e8e8;
+        }
+
+        .slider-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            padding: 0;
+            height: 8px;
+            border-radius: 5px;
+        }
+
+        .slider-value {
+            color: #00e8e8;
+            font-weight: 800;
+            font-size: 1.2rem;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 1.4rem;
+            background: linear-gradient(135deg, #00c8c8 0%, #00e8e8 100%);
+            color: #0a0e27;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 40px rgba(0,200,200,0.3);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 60px rgba(0,200,200,0.5);
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .roi-summary {
+            background: rgba(0,255,100,0.1);
+            border-left: 4px solid #00ff88;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .roi-amount {
+            font-size: 3rem;
+            color: #00ff88;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+
+        .roi-label {
+            color: #a8a8a8;
+            font-size: 1rem;
+        }
+
+        .chart-container {
+            background: rgba(0,200,200,0.08);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .breakdown-item {
+            padding: 1.5rem;
+            background: rgba(0,200,200,0.1);
+            border: 1px solid rgba(0,200,200,0.2);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .breakdown-value {
+            color: #00e8e8;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .breakdown-label {
+            color: #a8a8a8;
+            font-size: 0.9rem;
+        }
+
+        .savings-table {
+            width: 100%;
+            margin-top: 2rem;
+            border-collapse: collapse;
+        }
+
+        .savings-table th, .savings-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,200,200,0.2);
+        }
+
+        .savings-table th {
+            color: #00e8e8;
+            font-weight: 700;
+        }
+
+        .savings-table td {
+            color: #c0c0c0;
+        }
+
+        .year-savings {
+            color: #00ff88;
+            font-weight: 700;
+        }
+
+        .export-btn {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1.2rem 2.5rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.2) 0%, rgba(0,200,200,0.1) 100%);
+            color: #00e8e8;
+            border: 2px solid rgba(0,200,200,0.5);
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .export-btn:hover {
+            background: linear-gradient(135deg, rgba(0,200,200,0.3) 0%, rgba(0,200,200,0.2) 100%);
+            transform: translateY(-4px);
+        }
+
+        @media (max-width: 1024px) {
+            .calculator-wrapper { grid-template-columns: 1fr; }
+            .breakdown-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">CAIBER</div>
+        <a href="/" class="back-btn">← Back to Home</a>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>ROI Calculator</h1>
+            <p class="subtitle">See how much Caiber saves your organization</p>
+        </div>
+
+        <div class="calculator-wrapper">
+            <!-- Input Panel -->
+            <div class="panel">
+                <h2>💰 Your Organization</h2>
+                
+                <div class="form-group">
+                    <label>Organization Size</label>
+                    <select id="orgSize" onchange="updateCalculation()">
+                        <option value="">Select size...</option>
+                        <option value="small">Small (1-50 systems)</option>
+                        <option value="medium">Medium (51-500 systems)</option>
+                        <option value="large">Large (501-5000 systems)</option>
+                        <option value="enterprise">Enterprise (5000+ systems)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Annual IT Security Budget</label>
+                    <div class="slider-group">
+                        <input type="range" id="budget" min="50000" max="5000000" value="500000" step="50000" oninput="updateCalculation()">
+                        <div class="slider-value">$<span id="budgetValue">500,000</span></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Breach Risk Level (Per Year)</label>
+                    <select id="riskLevel" onchange="updateCalculation()">
+                        <option value="low">Low (5% chance)</option>
+                        <option value="medium" selected>Medium (25% chance)</option>
+                        <option value="high">High (50% chance)</option>
+                        <option value="critical">Critical (75% chance)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Average Breach Cost (if occurs)</label>
+                    <div class="slider-group">
+                        <input type="range" id="breachCost" min="100000" max="10000000" value="1000000" step="100000" oninput="updateCalculation()">
+                        <div class="slider-value">$<span id="breachValue">1,000,000</span></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Manual PAM Overhead (% of budget)</label>
+                    <div class="slider-group">
+                        <input type="range" id="overhead" min="5" max="50" value="30" oninput="updateCalculation()">
+                        <div class="slider-value"><span id="overheadValue">30</span>%</div>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" onclick="calculateROI()">Calculate My ROI</button>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="panel results" id="resultsPanel">
+                <h2>📊 Your 5-Year ROI</h2>
+
+                <div class="roi-summary">
+                    <div class="roi-amount" id="roiAmount">$0</div>
+                    <div class="roi-label">Total Savings Over 5 Years</div>
+                </div>
+
+                <div class="breakdown-grid">
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="year1">$0</div>
+                        <div class="breakdown-label">Year 1 Savings</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="breachSavings">$0</div>
+                        <div class="breakdown-label">Breach Prevention</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="payback">0 months</div>
+                        <div class="breakdown-label">Payback Period</div>
+                    </div>
+                </div>
+
+                <h3 style="color: #00e8e8; margin-top: 2rem; margin-bottom: 1rem;">Year-by-Year Breakdown</h3>
+                <table class="savings-table">
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Manual Labor Saved</th>
+                            <th>Breach Prevention</th>
+                            <th>Total Annual Savings</th>
+                            <th>Cumulative ROI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+
+                <button class="export-btn" onclick="exportResults()">📥 Download ROI Report (PDF)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatCurrency(num) {
+            return num.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+        }
+
+        function updateCalculation() {
+            document.getElementById('budgetValue').textContent = parseInt(document.getElementById('budget').value).toLocaleString();
+            document.getElementById('breachValue').textContent = parseInt(document.getElementById('breachCost').value).toLocaleString();
+            document.getElementById('overheadValue').textContent = document.getElementById('overhead').value;
+        }
+
+        function calculateROI() {
+            const orgSize = document.getElementById('orgSize').value;
+            const budget = parseInt(document.getElementById('budget').value);
+            const riskLevel = document.getElementById('riskLevel').value;
+            const breachCost = parseInt(document.getElementById('breachCost').value);
+            const overhead = parseInt(document.getElementById('overhead').value);
+
+            if (!orgSize) {
+                alert('Please select organization size');
+                return;
+            }
+
+            // Calculate annual savings from manual work reduction
+            const manualSavingsPercent = overhead * 0.65; // Reduce manual overhead by 65%
+            const manualSavings = (budget * manualSavingsPercent) / 100;
+
+            // Calculate breach prevention savings
+            const riskMap = { low: 0.05, medium: 0.25, high: 0.50, critical: 0.75 };
+            const currentRisk = riskMap[riskLevel];
+            const reducedRisk = currentRisk * 0.15; // Reduce risk by 85% with Caiber
+            const breachPrevention = (currentRisk - reducedRisk) * breachCost;
+
+            // Annual Caiber cost
+            const caiberCostMap = {
+                small: 50000,
+                medium: 150000,
+                large: 400000,
+                enterprise: 1000000
+            };
+            const caiberCost = caiberCostMap[orgSize];
+
+            // Calculate 5-year savings
+            const annualSavings = manualSavings + breachPrevention - caiberCost;
+            const totalSavings = annualSavings * 5;
+
+            // Payback period (months)
+            const paybackMonths = Math.ceil((caiberCost / annualSavings) * 12);
+
+            // Display results
+            document.getElementById('roiAmount').textContent = formatCurrency(totalSavings);
+            document.getElementById('year1').textContent = formatCurrency(annualSavings);
+            document.getElementById('breachSavings').textContent = formatCurrency(breachPrevention);
+            document.getElementById('payback').textContent = paybackMonths + ' months';
+
+            // Build table
+            let tableHTML = '';
+            let cumulative = 0;
+            for (let year = 1; year <= 5; year++) {
+                cumulative += annualSavings;
+                const breachRisk = currentRisk * Math.pow(0.85, year);
+                const yearBreachSavings = (currentRisk - breachRisk) * breachCost;
+                const yearManualSavings = manualSavings;
+                const yearTotal = yearManualSavings + yearBreachSavings - caiberCost;
+                
+                tableHTML += `
+                    <tr>
+                        <td>Year ${year}</td>
+                        <td>${formatCurrency(yearManualSavings)}</td>
+                        <td>${formatCurrency(yearBreachSavings)}</td>
+                        <td>${formatCurrency(yearTotal)}</td>
+                        <td class="year-savings">${formatCurrency(cumulative)}</td>
+                    </tr>
+                `;
+            }
+            document.getElementById('tableBody').innerHTML = tableHTML;
+            document.getElementById('resultsPanel').classList.add('active');
+        }
+
+        function exportResults() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            const roiAmount = document.getElementById('roiAmount').textContent;
+            const year1 = document.getElementById('year1').textContent;
+            const breachSavings = document.getElementById('breachSavings').textContent;
+            const payback = document.getElementById('payback').textContent;
+
+            const reportData = {
+                email: email,
+                roiAmount: roiAmount,
+                year1: year1,
+                breachSavings: breachSavings,
+                payback: payback,
+                reportType: 'ROI_Calculator'
+            };
+
+            fetch('/api/send-report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reportData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert('✅ ROI Report sent to ' + email + '!\n\nCheck your inbox in 1-2 minutes.');
+                document.querySelector('.export-btn').textContent = '✓ Report Sent';
+                document.querySelector('.export-btn').style.pointerEvents = 'none';
+                document.querySelector('.export-btn').style.opacity = '0.6';
+            })
+            .catch(err => {
+                alert('❌ Error sending report. Please try again.');
+                console.error(err);
+            });
+        }
+    </script>
+</body>
+</html>

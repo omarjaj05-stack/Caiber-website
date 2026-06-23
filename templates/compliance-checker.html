@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance Checker | Caiber</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: linear-gradient(135deg, #0a0e27 0%, #0f1535 50%, #0a0e27 100%);
+            color: #e8e8e8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 5%;
+            border-bottom: 1.5px solid rgba(0,200,200,0.2);
+            background: rgba(10,14,39,0.95);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { 
+            font-size: 1.8rem; 
+            font-weight: 950; 
+            color: #00e8e8; 
+            letter-spacing: 3px;
+        }
+
+        .back-btn { 
+            padding: 0.9rem 2.2rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.15) 0%, rgba(0,200,200,0.05) 100%);
+            border: 1.5px solid rgba(0,200,200,0.4);
+            color: #00e8e8;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 6rem 5%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, #ffffff 0%, #00e8e8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #a8a8a8;
+        }
+
+        .assessment-panel {
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.1) 0%, rgba(0,200,200,0.04) 100%);
+            border: 1.5px solid rgba(0,200,200,0.25);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+        }
+
+        .question-set {
+            display: none;
+        }
+
+        .question-set.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0,200,200,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00c8c8 0%, #00e8e8 100%);
+            transition: width 0.3s;
+        }
+
+        h2 {
+            color: #00e8e8;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .question {
+            margin-bottom: 2rem;
+        }
+
+        .question-text {
+            color: #e8e8e8;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option {
+            padding: 1.2rem;
+            background: rgba(0,200,200,0.08);
+            border: 2px solid rgba(0,200,200,0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            border-color: rgba(0,200,200,0.5);
+            background: rgba(0,200,200,0.12);
+            transform: translateX(8px);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        .option label {
+            cursor: pointer;
+            color: #c0c0c0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        button {
+            flex: 1;
+            padding: 1.4rem;
+            background: linear-gradient(135deg, #00c8c8 0%, #00e8e8 100%);
+            color: #0a0e27;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 15px 40px rgba(0,200,200,0.3);
+        }
+
+        button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 60px rgba(0,200,200,0.5);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .score-box {
+            background: linear-gradient(135deg, rgba(0,200,200,0.15) 0%, rgba(0,200,200,0.05) 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .score-number {
+            font-size: 4rem;
+            color: #00e8e8;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-label {
+            color: #a8a8a8;
+            font-size: 1.1rem;
+        }
+
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .compliance-item {
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid;
+        }
+
+        .compliance-item.pass {
+            background: rgba(0,255,100,0.1);
+            border-color: #00ff88;
+        }
+
+        .compliance-item.fail {
+            background: rgba(255,68,68,0.1);
+            border-color: #ff4444;
+        }
+
+        .compliance-title {
+            color: #00e8e8;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .compliance-status {
+            font-size: 0.9rem;
+            color: #a8a8a8;
+        }
+
+        .recommendations {
+            background: rgba(0,200,200,0.08);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .recommendations h3 {
+            color: #00e8e8;
+            margin-bottom: 1rem;
+        }
+
+        .rec-item {
+            padding: 1rem;
+            color: #c0c0c0;
+            border-bottom: 1px solid rgba(0,200,200,0.1);
+            margin-bottom: 0.8rem;
+        }
+
+        .rec-item:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .compliance-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2.5rem; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">CAIBER</div>
+        <a href="/" class="back-btn">← Back to Home</a>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Compliance Checker</h1>
+            <p class="subtitle">Quick assessment of your PAM compliance posture (2 minutes)</p>
+        </div>
+
+        <div class="assessment-panel">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <!-- Questions -->
+            <div id="question0" class="question-set active">
+                <h2>Access Control (1/5)</h2>
+                <div class="question">
+                    <div class="question-text">Do you have centralized privileged access management for all accounts?</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q0" value="3"> Yes, fully implemented
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q0" value="2"> Partially implemented
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q0" value="0"> No or minimal implementation
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="question1" class="question-set">
+                <h2>Monitoring & Audit (2/5)</h2>
+                <div class="question">
+                    <div class="question-text">Do you have real-time monitoring and audit logging of privileged access?</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q1" value="3"> Yes, comprehensive logging
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="2"> Partial logging
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="0"> No or minimal logging
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="question2" class="question-set">
+                <h2>Multi-Factor Authentication (3/5)</h2>
+                <div class="question">
+                    <div class="question-text">What percentage of privileged accounts have MFA enabled?</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q2" value="3"> 80-100%
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="2"> 40-79%
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="0"> 0-39%
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="question3" class="question-set">
+                <h2>Compliance & Risk Management (4/5)</h2>
+                <div class="question">
+                    <div class="question-text">Do you perform regular access reviews and compliance audits?</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q3" value="3"> Yes, quarterly or more frequent
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="2"> Annually
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="0"> Never or ad-hoc
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="question4" class="question-set">
+                <h2>Threat Detection & Response (5/5)</h2>
+                <div class="question">
+                    <div class="question-text">Do you have automated threat detection for privileged access?</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q4" value="3"> Yes, with AI/ML detection
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q4" value="2"> Basic rules-based detection
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q4" value="0"> No automated detection
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(0,200,200,0.2);">
+                    <div class="question-text">Email for results:</div>
+                    <input type="email" id="complianceEmail" placeholder="your@company.com" style="width: 100%; padding: 1.2rem; background: rgba(0,200,200,0.1); border: 1.5px solid rgba(0,200,200,0.3); border-radius: 12px; color: #e8e8e8; font-size: 1rem;">
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div id="results" class="results">
+                <div class="score-box">
+                    <div class="score-number" id="complianceScore">0%</div>
+                    <div class="score-label">Compliance Score</div>
+                </div>
+
+                <div class="compliance-grid" id="complianceGrid"></div>
+
+                <div class="recommendations">
+                    <h3>🎯 Top Priorities to Improve</h3>
+                    <div id="recList"></div>
+                </div>
+
+                <button onclick="location.href='/pam-scanner'" style="background: linear-gradient(135deg, rgba(0,200,200,0.2) 0%, rgba(0,200,200,0.1) 100%); color: #00e8e8; border: 2px solid rgba(0,200,200,0.5);">📊 Get Detailed Assessment with PAM Scanner</button>
+            </div>
+
+            <!-- Navigation -->
+            <div class="button-group" id="navButtons">
+                <button id="prevBtn" onclick="previousQuestion()" style="display:none;">← Previous</button>
+                <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 5;
+        const answers = [0, 0, 0, 0, 0];
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function showQuestion(q) {
+            for (let i = 0; i < totalQuestions; i++) {
+                document.getElementById(`question${i}`).classList.remove('active');
+            }
+            document.getElementById(`question${q}`).classList.add('active');
+
+            document.getElementById('prevBtn').style.display = q > 0 ? 'block' : 'none';
+            document.getElementById('nextBtn').textContent = q === totalQuestions - 1 ? 'See Results' : 'Next →';
+
+            updateProgress();
+        }
+
+        function nextQuestion() {
+            const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            if (!selected) {
+                alert('Please select an answer');
+                return;
+            }
+
+            answers[currentQuestion] = parseInt(selected.value);
+
+            if (currentQuestion < totalQuestions - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function showResults() {
+            const total = answers.reduce((a, b) => a + b) * 100 / (totalQuestions * 3);
+            const score = Math.round(total);
+            const email = document.getElementById('complianceEmail').value;
+
+            document.getElementById('question0').classList.remove('active');
+            document.getElementById('results').classList.add('active');
+            document.getElementById('navButtons').style.display = 'none';
+            document.getElementById('complianceScore').textContent = score + '%';
+
+            const frameworks = [
+                { name: 'SOC 2', pass: score >= 70 },
+                { name: 'ISO 27001', pass: score >= 75 },
+                { name: 'HIPAA', pass: score >= 80 },
+                { name: 'PCI-DSS', pass: score >= 85 }
+            ];
+
+            let gridHTML = frameworks.map(f => `
+                <div class="compliance-item ${f.pass ? 'pass' : 'fail'}">
+                    <div class="compliance-title">${f.pass ? '✓' : '✗'} ${f.name}</div>
+                    <div class="compliance-status">${f.pass ? 'COMPLIANT' : 'NOT COMPLIANT'}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('complianceGrid').innerHTML = gridHTML;
+
+            let recommendations = [];
+            if (answers[0] < 3) recommendations.push('1. Implement centralized PAM system across all privileged accounts');
+            if (answers[1] < 3) recommendations.push('2. Enable comprehensive audit logging and monitoring');
+            if (answers[2] < 3) recommendations.push('3. Deploy multi-factor authentication on all admin accounts');
+            if (answers[3] < 3) recommendations.push('4. Establish quarterly access reviews and compliance audits');
+            if (answers[4] < 3) recommendations.push('5. Deploy AI-powered threat detection system');
+
+            const recHTML = recommendations.map(r => `<div class="rec-item">🔴 ${r}</div>`).join('');
+            document.getElementById('recList').innerHTML = recHTML;
+
+            // Send email if provided
+            if (email) {
+                const reportData = {
+                    email: email,
+                    score: score,
+                    frameworks: frameworks,
+                    recommendations: recommendations,
+                    reportType: 'Compliance_Checker'
+                };
+
+                fetch('/api/send-report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reportData)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    const msg = document.createElement('div');
+                    msg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: rgba(0,255,100,0.2); border: 1px solid #00ff88; color: #00ff88; padding: 1.5rem; border-radius: 8px; z-index: 9999; font-weight: 600;';
+                    msg.textContent = '✓ Results sent to ' + email;
+                    document.body.appendChild(msg);
+                    setTimeout(() => msg.remove(), 4000);
+                })
+                .catch(err => console.error('Email error:', err));
+            }
+        }
+
+        showQuestion(0);
+    </script>
+</body>
+</html>

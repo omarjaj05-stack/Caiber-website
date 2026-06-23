@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Intelligence | Caiber</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: linear-gradient(135deg, #0a0e27 0%, #0f1535 50%, #0a0e27 100%);
+            color: #e8e8e8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 5%;
+            border-bottom: 1.5px solid rgba(0,200,200,0.2);
+            background: rgba(10,14,39,0.95);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { 
+            font-size: 1.8rem; 
+            font-weight: 950; 
+            color: #00e8e8; 
+            letter-spacing: 3px;
+        }
+
+        .back-btn { 
+            padding: 0.9rem 2.2rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.15) 0%, rgba(0,200,200,0.05) 100%);
+            border: 1.5px solid rgba(0,200,200,0.4);
+            color: #00e8e8;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #00e8e8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a8a8a8;
+            margin-bottom: 2rem;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(0,255,100,0.1);
+            border: 1px solid rgba(0,255,100,0.3);
+            border-radius: 20px;
+            color: #00ff88;
+            font-weight: 600;
+        }
+
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .threat-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .threat-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-height: 700px;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        .threat-card {
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.1) 0%, rgba(0,200,200,0.04) 100%);
+            border-left: 4px solid;
+            border-radius: 12px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .threat-card.critical {
+            border-color: #ff4444;
+            background: rgba(255,68,68,0.08);
+        }
+
+        .threat-card.high {
+            border-color: #ffaa00;
+            background: rgba(255,170,0,0.08);
+        }
+
+        .threat-card.medium {
+            border-color: #ffdd00;
+            background: rgba(255,221,0,0.08);
+        }
+
+        .threat-card.low {
+            border-color: #00ff88;
+            background: rgba(0,255,136,0.08);
+        }
+
+        .threat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .threat-title {
+            color: #e8e8e8;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .threat-severity {
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .critical { background: rgba(255,68,68,0.2); color: #ff4444; }
+        .high { background: rgba(255,170,0,0.2); color: #ffaa00; }
+        .medium { background: rgba(255,221,0,0.2); color: #ffdd00; }
+        .low { background: rgba(0,255,136,0.2); color: #00ff88; }
+
+        .threat-body {
+            color: #a8a8a8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .threat-meta {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .threat-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .stats-box {
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.1) 0%, rgba(0,200,200,0.04) 100%);
+            border: 1.5px solid rgba(0,200,200,0.25);
+            border-radius: 12px;
+        }
+
+        .stats-box h3 {
+            color: #00e8e8;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(0,200,200,0.1);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #a8a8a8;
+        }
+
+        .stat-value {
+            color: #00e8e8;
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+
+        .cta-box {
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.15) 0%, rgba(0,200,200,0.05) 100%);
+            border: 2px solid rgba(0,200,200,0.3);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .cta-box h3 {
+            color: #00e8e8;
+            margin-bottom: 1rem;
+        }
+
+        .cta-box p {
+            color: #a8a8a8;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #00c8c8 0%, #00e8e8 100%);
+            color: #0a0e27;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0,200,200,0.3);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,200,200,0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,200,200,0.3);
+            border-radius: 10px;
+        }
+
+        @media (max-width: 1024px) {
+            .threat-container { grid-template-columns: 1fr; }
+            .sidebar { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .threat-container { grid-template-columns: 1fr; }
+            .sidebar { grid-template-columns: 1fr; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">CAIBER</div>
+        <a href="/" class="back-btn">← Back to Home</a>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Threat Intelligence Feed</h1>
+            <p class="subtitle">Real-time PAM security threats and vulnerabilities</p>
+            <div class="status-indicator">
+                <div class="pulse"></div>
+                Live Threat Detection
+            </div>
+        </div>
+
+        <div class="threat-container">
+            <!-- Feed -->
+            <div class="threat-feed" id="threatFeed"></div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Statistics -->
+                <div class="stats-box">
+                    <h3>📊 This Week</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Critical Threats</span>
+                        <span class="stat-value">8</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">High Severity</span>
+                        <span class="stat-value">23</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Vulnerabilities</span>
+                        <span class="stat-value">156</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Breaches Detected</span>
+                        <span class="stat-value">12</span>
+                    </div>
+                </div>
+
+                <!-- Call to Action -->
+                <div class="cta-box">
+                    <h3>🛡️ Caiber Assist</h3>
+                    <p>Detect threats like these automatically in your environment</p>
+                    <a href="/ai-agent" class="cta-btn">Try AI Agent</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const threats = [
+            {
+                title: "Zero-Day PAM Vulnerability Discovered",
+                description: "A critical zero-day vulnerability in privilege escalation systems allows unauthorized access. CVSS 9.8. Affects 40% of enterprise PAM systems.",
+                severity: "critical",
+                source: "CVE-2026-1847",
+                time: "2 minutes ago",
+                affected: "40% of systems"
+            },
+            {
+                title: "Ransomware Campaign Targets Privileged Accounts",
+                description: "New RobbinHood variant actively exploiting weak PAM configurations. Focusing on service accounts without MFA. 847 confirmed cases.",
+                severity: "critical",
+                source: "CISA Alert",
+                time: "34 minutes ago",
+                affected: "847 organizations"
+            },
+            {
+                title: "Credential Stuffing Attack Wave",
+                description: "Massive coordinated attack attempting to breach admin accounts using leaked credentials. 12.4M login attempts detected across the globe.",
+                severity: "high",
+                source: "Threat Intelligence",
+                time: "1 hour ago",
+                affected: "2,847 attempts blocked"
+            },
+            {
+                title: "Insider Threat Detected: Privilege Abuse",
+                description: "Employee account showing suspicious access pattern - accessing sensitive data outside normal business hours from VPN in another country.",
+                severity: "high",
+                source: "Behavioral Analytics",
+                time: "2 hours ago",
+                affected: "1 account"
+            },
+            {
+                title: "Supply Chain Attack - Compromised Software",
+                description: "Popular PAM integration library contains malicious code. Potentially affects thousands of deployments. Immediate patching recommended.",
+                severity: "critical",
+                source: "Software Advisory",
+                time: "3 hours ago",
+                affected: "2,100+ deployments"
+            },
+            {
+                title: "Brute Force Attack on Admin Portal",
+                description: "Distributed brute force attack targeting login systems. Thousands of failed attempts from 450+ IP addresses detected globally.",
+                severity: "high",
+                source: "Network Security",
+                time: "4 hours ago",
+                affected: "15,847 attempts"
+            },
+            {
+                title: "Lateral Movement Detected in Network",
+                description: "Suspicious lateral movement detected after initial compromise. Attacker attempting to escalate privileges. Immediate containment required.",
+                severity: "critical",
+                source: "EDR System",
+                time: "5 hours ago",
+                affected: "3 systems"
+            },
+            {
+                title: "Compliance Violation: Audit Log Tampering",
+                description: "Evidence of audit log deletion detected. Privileged account shows 847 log entries deleted in past 24 hours. Investigation initiated.",
+                severity: "high",
+                source: "Audit System",
+                time: "6 hours ago",
+                affected: "1 account"
+            },
+            {
+                title: "Advanced Persistent Threat (APT) Group Active",
+                description: "APT28 group targeting PAM systems using spear-phishing campaigns. Multiple organizations already compromised. Sophistication level: expert.",
+                severity: "critical",
+                source: "Threat Intel",
+                time: "7 hours ago",
+                affected: "47 organizations"
+            },
+            {
+                title: "Database Credential Exposure",
+                description: "Database admin credentials leaked on dark web marketplace. Credentials actively being used for unauthorized access. Immediate rotation required.",
+                severity: "high",
+                source: "Dark Web Monitor",
+                time: "8 hours ago",
+                affected: "12 systems"
+            }
+        ];
+
+        function loadThreats() {
+            const feedDiv = document.getElementById('threatFeed');
+            feedDiv.innerHTML = '';
+            
+            threats.forEach((threat, index) => {
+                setTimeout(() => {
+                    const card = document.createElement('div');
+                    card.className = `threat-card ${threat.severity}`;
+                    
+                    card.innerHTML = `
+                        <div class="threat-header">
+                            <div class="threat-title">${threat.title}</div>
+                            <div class="threat-severity ${threat.severity}">${threat.severity}</div>
+                        </div>
+                        <div class="threat-body">${threat.description}</div>
+                        <div class="threat-meta">
+                            <div class="threat-meta-item">📌 ${threat.source}</div>
+                            <div class="threat-meta-item">⏱️ ${threat.time}</div>
+                            <div class="threat-meta-item">🎯 ${threat.affected}</div>
+                        </div>
+                    `;
+                    
+                    feedDiv.appendChild(card);
+                }, index * 200);
+            });
+        }
+
+        loadThreats();
+
+        // Refresh every 60 seconds (simulate new threats)
+        setInterval(() => {
+            const newThreat = threats[Math.floor(Math.random() * threats.length)];
+            const feedDiv = document.getElementById('threatFeed');
+            
+            const card = document.createElement('div');
+            card.className = `threat-card ${newThreat.severity}`;
+            card.innerHTML = `
+                <div class="threat-header">
+                    <div class="threat-title">${newThreat.title}</div>
+                    <div class="threat-severity ${newThreat.severity}">${newThreat.severity}</div>
+                </div>
+                <div class="threat-body">${newThreat.description}</div>
+                <div class="threat-meta">
+                    <div class="threat-meta-item">📌 ${newThreat.source}</div>
+                    <div class="threat-meta-item">⏱️ Just now</div>
+                    <div class="threat-meta-item">🎯 ${newThreat.affected}</div>
+                </div>
+            `;
+            
+            feedDiv.insertBefore(card, feedDiv.firstChild);
+            
+            // Remove oldest if more than 15
+            while (feedDiv.children.length > 15) {
+                feedDiv.removeChild(feedDiv.lastChild);
+            }
+        }, 60000);
+    </script>
+</body>
+</html>

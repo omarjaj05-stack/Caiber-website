@@ -252,8 +252,8 @@ Format for easy reading in an HTML report.
             <p>Contact Caiber to discuss a detailed remediation plan and timeline for addressing identified vulnerabilities.</p>
         </div>
         <div class="recommendation">
-            <strong>3. Deploy Caiber Assist</strong>
-            <p>Implement continuous PAM monitoring with Caiber Assist to detect and prevent future unauthorized access.</p>
+            <strong>3. Deploy CaiberAssist</strong>
+            <p>Implement continuous PAM monitoring with CaiberAssist to detect and prevent future unauthorized access.</p>
         </div>
 
         <h1>About This Assessment</h1>
@@ -466,7 +466,7 @@ KEY METRICS
 
 INVESTMENT DETAILS
 ------------------
-Caiber Assist Implementation
+CaiberAssist Implementation
 - Advanced AI Threat Detection
 - Real-time Privilege Monitoring
 - Automated Compliance Reporting

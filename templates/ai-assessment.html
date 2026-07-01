@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI PAM Assessment | Caiber</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: linear-gradient(135deg, #0a0e27 0%, #0f1535 50%, #0a0e27 100%);
+            color: #e8e8e8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 5%;
+            border-bottom: 1.5px solid rgba(0,200,200,0.2);
+            background: rgba(10,14,39,0.95);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { 
+            font-size: 1.8rem; 
+            font-weight: 950; 
+            color: #00e8e8; 
+            letter-spacing: 3px;
+        }
+
+        .back-btn { 
+            padding: 0.9rem 2.2rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.15) 0%, rgba(0,200,200,0.05) 100%);
+            border: 1.5px solid rgba(0,200,200,0.4);
+            color: #00e8e8;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #00e8e8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a8a8a8;
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(0,255,100,0.2);
+            border: 1px solid rgba(0,255,100,0.4);
+            color: #00ff88;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .panel {
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.1) 0%, rgba(0,200,200,0.04) 100%);
+            border: 1.5px solid rgba(0,200,200,0.25);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            margin-bottom: 2rem;
+        }
+
+        .upload-section {
+            display: none;
+        }
+
+        .upload-section.active {
+            display: block;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #00e8e8;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        label {
+            display: block;
+            color: #a8a8a8;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 1.2rem;
+            background: rgba(0,200,200,0.1);
+            border: 1.5px solid rgba(0,200,200,0.3);
+            border-radius: 12px;
+            color: #e8e8e8;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: rgba(0,200,200,0.6);
+            background: rgba(0,200,200,0.15);
+        }
+
+        select option {
+            background: #0a0e27;
+            color: #e8e8e8;
+        }
+
+        .file-upload {
+            border: 2px dashed rgba(0,200,200,0.3);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0,200,200,0.05);
+        }
+
+        .file-upload:hover {
+            border-color: rgba(0,200,200,0.6);
+            background: rgba(0,200,200,0.1);
+        }
+
+        .file-upload.dragover {
+            border-color: rgba(0,200,200,0.8);
+            background: rgba(0,200,200,0.15);
+        }
+
+        .file-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-text {
+            color: #a8a8a8;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-formats {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-selected {
+            background: rgba(0,255,100,0.1);
+            border-color: rgba(0,255,100,0.3);
+            color: #00ff88;
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 1.4rem;
+            background: linear-gradient(135deg, #00c8c8 0%, #00e8e8 100%);
+            color: #0a0e27;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 40px rgba(0,200,200,0.3);
+            margin-top: 2rem;
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 60px rgba(0,200,200,0.5);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .progress-section {
+            display: none;
+            text-align: center;
+        }
+
+        .progress-section.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0,200,200,0.2);
+            border-top: 4px solid #00e8e8;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-text {
+            color: #a8a8a8;
+            margin-top: 1rem;
+            font-size: 1rem;
+        }
+
+        .report-container {
+            background: white;
+            color: #333;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .report-header {
+            border-bottom: 2px solid #00c8c8;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .report-title {
+            color: #0a0e27;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .report-date {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .report-section {
+            margin-bottom: 2rem;
+        }
+
+        .report-section h3 {
+            color: #00c8c8;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .finding {
+            background: #fff9f9;
+            border-left: 4px solid #ff4444;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            border-radius: 4px;
+        }
+
+        .finding.high {
+            background: #fffaf9;
+            border-left-color: #ffaa00;
+        }
+
+        .finding.medium {
+            background: #fffff9;
+            border-left-color: #ffdd00;
+        }
+
+        .finding.low {
+            background: #f9fff9;
+            border-left-color: #00ff88;
+        }
+
+        .finding-title {
+            font-weight: 700;
+            color: #0a0e27;
+            margin-bottom: 0.3rem;
+        }
+
+        .finding-severity {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .severity-critical {
+            background: #ff4444;
+            color: white;
+        }
+
+        .severity-high {
+            background: #ffaa00;
+            color: white;
+        }
+
+        .severity-medium {
+            background: #ffdd00;
+            color: #0a0e27;
+        }
+
+        .severity-low {
+            background: #00ff88;
+            color: #0a0e27;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #00c8c8 0%, #00e8e8 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-top: 2rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0,200,200,0.3);
+        }
+
+        .error-message {
+            background: rgba(255,68,68,0.1);
+            border-left: 4px solid #ff4444;
+            color: #ff6666;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background: rgba(0,255,136,0.1);
+            border-left: 4px solid #00ff88;
+            color: #00ff88;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-box {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #00c8c8;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.5rem; }
+            .panel { padding: 2rem; }
+            .report-container { max-height: 400px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">CAIBER</div>
+        <a href="/" class="back-btn">← Back to Home</a>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <div class="badge">🤖 AI-POWERED ANALYSIS</div>
+            <h1>PAM Assessment</h1>
+            <p class="subtitle">Upload your infrastructure data. Get real, accurate security findings in minutes.</p>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <!-- UPLOAD SECTION -->
+        <div class="upload-section active" id="uploadSection">
+            <div class="panel">
+                <h2>📤 Upload Your Infrastructure Data</h2>
+                <p style="color: #a8a8a8; margin-bottom: 2rem;">
+                    Upload config files, logs, or spreadsheets of your PAM infrastructure. Our AI will analyze the data and identify vulnerabilities.
+                </p>
+
+                <form id="assessmentForm">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label>Organization Name *</label>
+                            <input type="text" id="orgName" placeholder="Your Company Name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Organization Size *</label>
+                            <select id="orgSize" required>
+                                <option value="">Select...</option>
+                                <option value="small">Small (1-50 systems)</option>
+                                <option value="medium">Medium (51-500 systems)</option>
+                                <option value="large">Large (501-5000 systems)</option>
+                                <option value="enterprise">Enterprise (5000+ systems)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>System Count *</label>
+                            <input type="number" id="systemCount" placeholder="Approximate number of systems" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Industry *</label>
+                            <select id="industry" required>
+                                <option value="">Select...</option>
+                                <option value="finance">Finance/Banking</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="technology">Technology</option>
+                                <option value="government">Government</option>
+                                <option value="retail">Retail</option>
+                                <option value="manufacturing">Manufacturing</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Email Address *</label>
+                            <input type="email" id="email" placeholder="your@company.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 2rem;">
+                        <label>Upload PAM Data File *</label>
+                        <div class="file-upload" id="fileUpload" onclick="document.getElementById('fileInput').click()">
+                            <div class="file-icon">📁</div>
+                            <div class="file-text">Click to upload or drag and drop</div>
+                            <div class="file-formats">Supported: CSV, JSON, TXT, XLSX (max 10MB)</div>
+                        </div>
+                        <input type="file" id="fileInput" accept=".csv,.json,.txt,.xlsx,.xls" required>
+                        <div id="fileName" style="color: #00ff88; margin-top: 1rem; display: none;"></div>
+                    </div>
+
+                    <button type="submit" class="analyze-btn" id="analyzeBtn">Analyze Infrastructure</button>
+                </form>
+
+                <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(0,200,200,0.08); border-radius: 8px; border-left: 4px solid rgba(0,200,200,0.4);">
+                    <p style="color: #a8a8a8; font-size: 0.9rem;">
+                        <strong>What data should I upload?</strong><br>
+                        • Active Directory user/group exports<br>
+                        • PAM system configuration files<br>
+                        • Service account listings<br>
+                        • Authentication logs<br>
+                        • Access control policies<br>
+                        • Any CSV/JSON with account or system information
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROGRESS SECTION -->
+        <div class="progress-section" id="progressSection">
+            <div class="panel">
+                <h2>⚙️ Analyzing Your Infrastructure</h2>
+                <div class="spinner"></div>
+                <div class="progress-text">
+                    <p>Uploading files...</p>
+                    <p id="progressDetail">Please wait, this may take a minute...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS SECTION -->
+        <div class="results-section" id="resultsSection">
+            <div class="panel">
+                <h2>✅ Assessment Complete</h2>
+                <div id="reportContent" class="report-container"></div>
+                <button class="download-btn" onclick="downloadReport()">⬇️ Download Full Report</button>
+                <a href="/" class="download-btn" style="margin-left: 1rem; background: linear-gradient(135deg, rgba(0,200,200,0.2) 0%, rgba(0,200,200,0.1) 100%); color: #00e8e8; border: 2px solid rgba(0,200,200,0.5);">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // File upload handling
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+            fileInput.files = e.dataTransfer.files;
+            updateFileName();
+        });
+
+        fileInput.addEventListener('change', updateFileName);
+
+        function updateFileName() {
+            if (fileInput.files.length > 0) {
+                fileName.textContent = `✓ ${fileInput.files[0].name}`;
+                fileName.style.display = 'block';
+                fileUpload.classList.add('file-selected');
+            }
+        }
+
+        // Form submission
+        document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validate
+            if (!fileInput.files.length) {
+                showError('Please select a file');
+                return;
+            }
+
+            // Show progress
+            document.getElementById('uploadSection').classList.remove('active');
+            document.getElementById('progressSection').classList.add('active');
+
+            const formData = new FormData();
+            formData.append('org_name', document.getElementById('orgName').value);
+            formData.append('org_size', document.getElementById('orgSize').value);
+            formData.append('system_count', document.getElementById('systemCount').value);
+            formData.append('industry', document.getElementById('industry').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                updateProgress('Uploading file...');
+                const response = await fetch('/api/analyze-pam', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError(data.error || 'Analysis failed');
+                    document.getElementById('progressSection').classList.remove('active');
+                    document.getElementById('uploadSection').classList.add('active');
+                    return;
+                }
+
+                // Show results
+                updateProgress('Generating report...');
+                await new Promise(r => setTimeout(r, 1000));
+
+                document.getElementById('reportContent').innerHTML = data.report;
+                document.getElementById('progressSection').classList.remove('active');
+                document.getElementById('resultsSection').classList.add('active');
+
+                showSuccess(`Assessment complete! Report sent to ${document.getElementById('email').value}`);
+
+                // Store report for download
+                window.fullReport = data.report;
+
+            } catch (error) {
+                showError('Network error: ' + error.message);
+                document.getElementById('progressSection').classList.remove('active');
+                document.getElementById('uploadSection').classList.add('active');
+            }
+        });
+
+        function updateProgress(text) {
+            document.getElementById('progressDetail').textContent = text;
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = '❌ ' + msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 5000);
+        }
+
+        function showSuccess(msg) {
+            const el = document.getElementById('successMessage');
+            el.textContent = '✅ ' + msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 5000);
+        }
+
+        function downloadReport() {
+            if (!window.fullReport) return;
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(window.fullReport));
+            element.setAttribute('download', `PAM_Assessment_${new Date().getTime()}.html`);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    </script>
+</body>
+</html>

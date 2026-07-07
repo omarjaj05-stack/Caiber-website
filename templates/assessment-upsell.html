@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Complete | Caiber Enterprise AI Platform</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: linear-gradient(135deg, #0a0e27 0%, #0f1535 50%, #0a0e27 100%);
+            color: #e8e8e8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 5%;
+            border-bottom: 1.5px solid rgba(0,200,200,0.2);
+            background: rgba(10,14,39,0.95);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { 
+            font-size: 1.8rem; 
+            font-weight: 950; 
+            color: #00e8e8; 
+            letter-spacing: 3px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+        }
+
+        .report-section {
+            background: linear-gradient(135deg, rgba(0,200,200,0.1) 0%, rgba(0,200,200,0.04) 100%);
+            border: 1.5px solid rgba(0,200,200,0.25);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(15px);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #ffffff 0%, #00e8e8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .report-content {
+            background: white;
+            color: #333;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+        }
+
+        /* UPSELL SECTION - THE MAIN CALL TO ACTION */
+        .enterprise-section {
+            background: linear-gradient(135deg, rgba(0,255,100,0.15) 0%, rgba(0,200,200,0.1) 100%);
+            border: 2px solid rgba(0,255,100,0.5);
+            border-radius: 20px;
+            padding: 4rem;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(15px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enterprise-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,255,100,0.1) 0%, transparent 70%);
+            animation: glow 3s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .enterprise-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .next-level-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #00ff88 0%, #00e8e8 100%);
+            color: #0a0e27;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .enterprise-section h2 {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            font-weight: 900;
+        }
+
+        .enterprise-section .subtitle {
+            font-size: 1.3rem;
+            color: #00ff88;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            text-align: left;
+        }
+
+        .feature-item {
+            background: rgba(0,200,200,0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .feature-item h4 {
+            color: #00ff88;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .feature-item p {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88 0%, #00e8e8 100%);
+            color: #0a0e27;
+            box-shadow: 0 15px 40px rgba(0,255,100,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 60px rgba(0,255,100,0.5);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, rgba(0,200,200,0.2) 0%, rgba(0,200,200,0.1) 100%);
+            color: #00e8e8;
+            border: 2px solid rgba(0,200,200,0.5);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, rgba(0,200,200,0.3) 0%, rgba(0,200,200,0.2) 100%);
+            border-color: rgba(0,200,200,0.8);
+        }
+
+        .comparison-table {
+            margin: 3rem 0;
+            background: rgba(0,200,200,0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(0,200,200,0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #e8e8e8;
+        }
+
+        th {
+            background: linear-gradient(135deg, rgba(0,200,200,0.15) 0%, rgba(0,200,200,0.05) 100%);
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(0,200,200,0.3);
+            color: #00e8e8;
+        }
+
+        td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid rgba(0,200,200,0.15);
+        }
+
+        tr:hover {
+            background: rgba(0,200,200,0.08);
+        }
+
+        .checkmark {
+            color: #00ff88;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        .x-mark {
+            color: #ffaa00;
+            font-weight: 700;
+        }
+
+        .security-note {
+            background: linear-gradient(135deg, rgba(0,150,200,0.1) 0%, rgba(0,200,200,0.05) 100%);
+            border-left: 4px solid #00c8c8;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .security-note h4 {
+            color: #00e8e8;
+            margin-bottom: 0.5rem;
+        }
+
+        .security-note p {
+            color: #a8a8a8;
+            font-size: 0.95rem;
+        }
+
+        .deployment-info {
+            background: linear-gradient(135deg, rgba(255,200,0,0.1) 0%, rgba(255,150,0,0.05) 100%);
+            border-left: 4px solid #ffaa00;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .deployment-info h4 {
+            color: #ffdd00;
+            margin-bottom: 0.5rem;
+        }
+
+        .deployment-info p {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+        }
+
+        .timeline {
+            margin: 2rem 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-marker {
+            background: linear-gradient(135deg, #00c8c8 0%, #00e8e8 100%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #0a0e27;
+            margin-right: 2rem;
+            flex-shrink: 0;
+            font-size: 1.2rem;
+        }
+
+        .timeline-content h4 {
+            color: #00e8e8;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content p {
+            color: #a8a8a8;
+            font-size: 0.95rem;
+        }
+
+        .footer-cta {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(0,200,200,0.08) 0%, rgba(0,200,200,0.03) 100%);
+            border: 1.5px solid rgba(0,200,200,0.25);
+            border-radius: 20px;
+            margin-top: 3rem;
+        }
+
+        .footer-cta h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .footer-cta p {
+            font-size: 1.1rem;
+            color: #a8a8a8;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 2rem 2rem; }
+            h1 { font-size: 2.2rem; }
+            .enterprise-section h2 { font-size: 1.8rem; }
+            .enterprise-section { padding: 2rem; }
+            .cta-buttons { flex-direction: column; }
+            .btn { width: 100%; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">CAIBER</div>
+    </nav>
+
+    <div class="container">
+        <!-- REPORT SECTION -->
+        <div class="report-section">
+            <h1>✅ Assessment Complete</h1>
+            <p style="font-size: 1.1rem; color: #a8a8a8; margin-bottom: 2rem;">
+                Your PAM infrastructure has been analyzed and your professional security report is ready.
+            </p>
+            <div class="report-content" id="reportContent">
+                <p>Loading your assessment report...</p>
+            </div>
+            <a href="#" onclick="downloadReport()" class="btn btn-secondary" style="margin-top: 1rem;">⬇️ Download Full Report as PDF</a>
+        </div>
+
+        <!-- UPSELL SECTION - TAKE IT TO THE NEXT LEVEL -->
+        <div class="enterprise-section">
+            <div class="enterprise-content">
+                <div class="next-level-badge">🚀 Take Your Security to the Next Level</div>
+                
+                <h2>Enterprise AI Platform</h2>
+                <p class="subtitle">Real-Time Threat Detection, AI Analytics & Continuous Monitoring</p>
+
+                <p style="font-size: 1.1rem; color: #b0b0b0; margin-bottom: 2rem;">
+                    The assessment revealed areas for improvement. Go beyond periodic reports and get <strong>continuous, AI-powered security intelligence</strong> deployed directly in your infrastructure.
+                </p>
+
+                <!-- KEY FEATURES -->
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>🎯 Real-Time Monitoring</h4>
+                        <p>Live threat detection and security analytics 24/7</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🤖 AI-Powered Intelligence</h4>
+                        <p>Advanced AI analyzes your environment continuously</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>📊 Live Dashboards</h4>
+                        <p>Real-time analytics, risk scoring, and insights</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🔒 Enterprise Security</h4>
+                        <p>Fully isolated, private deployment in your infrastructure</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>⚡ Instant Alerts</h4>
+                        <p>Immediate notifications on security threats</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>📈 Compliance Ready</h4>
+                        <p>Automated compliance tracking and reporting</p>
+                    </div>
+                </div>
+
+                <!-- COMPARISON TABLE -->
+                <h3 style="color: #ffffff; margin-top: 3rem; margin-bottom: 1.5rem; text-align: center;">Assessment vs Enterprise Platform</h3>
+                <div class="comparison-table">
+                    <table>
+                        <tr>
+                            <th>Feature</th>
+                            <th>PAM Assessment</th>
+                            <th>Enterprise Platform</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Report Delivery</strong></td>
+                            <td><span class="checkmark">✓</span> One-time</td>
+                            <td><span class="checkmark">✓</span> Continuous</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Real-Time Monitoring</strong></td>
+                            <td><span class="x-mark">—</span></td>
+                            <td><span class="checkmark">✓</span> 24/7</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Threat Detection</strong></td>
+                            <td><span class="x-mark">—</span></td>
+                            <td><span class="checkmark">✓</span> Real-time</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Live Dashboards</strong></td>
+                            <td><span class="x-mark">—</span></td>
+                            <td><span class="checkmark">✓</span> Interactive</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AI Analytics</strong></td>
+                            <td><span class="checkmark">✓</span> One-time analysis</td>
+                            <td><span class="checkmark">✓</span> Continuous learning</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Private Deployment</strong></td>
+                            <td><span class="x-mark">—</span></td>
+                            <td><span class="checkmark">✓</span> Isolated instance</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Compliance Automation</strong></td>
+                            <td><span class="checkmark">✓</span> Manual tracking</td>
+                            <td><span class="checkmark">✓</span> Automated</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Price</strong></td>
+                            <td><strong>$10k-$25k</strong></td>
+                            <td><strong>$150k-$500k/year</strong></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- SECURITY & DEPLOYMENT INFO -->
+                <div class="security-note">
+                    <h4>🔐 Enterprise-Grade Data Security</h4>
+                    <p>Your data never leaves your infrastructure. The Enterprise AI Platform is deployed on your own servers or cloud environment with complete isolation. Zero data sharing between customers. End-to-end encryption. Fully compliant with SOC 2, ISO 27001, HIPAA, and PCI-DSS.</p>
+                </div>
+
+                <div class="deployment-info">
+                    <h4>⚙️ How Deployment Works</h4>
+                    <p>Our team will work with your IT department to deploy a dedicated AI instance directly into your infrastructure. You get your own isolated environment, your own dashboard, your own data—completely private. Once live, the AI monitors your entire organization continuously. Installation typically takes 2-4 weeks.</p>
+                </div>
+
+                <!-- IMPLEMENTATION TIMELINE -->
+                <h3 style="color: #ffffff; margin-top: 3rem; margin-bottom: 1.5rem;">Implementation Timeline</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content">
+                            <h4>Consultation (Week 1)</h4>
+                            <p>Understand your infrastructure, requirements, and security needs. Design custom deployment.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content">
+                            <h4>Infrastructure Setup (Week 2)</h4>
+                            <p>Deploy isolated AI instance on your servers/cloud. Configure data connectors and integrations.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">3</div>
+                        <div class="timeline-content">
+                            <h4>Integration & Testing (Week 3)</h4>
+                            <p>Connect to your systems. Run security tests. Verify data isolation and encryption.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">4</div>
+                        <div class="timeline-content">
+                            <h4>Training & Go-Live (Week 4)</h4>
+                            <p>Train your team on the dashboard. Go live with continuous monitoring and AI analytics.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CALL TO ACTION BUTTONS -->
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="scheduleConsultation()">
+                        Schedule Enterprise Consultation
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadDatasheet()">
+                        Download Platform Datasheet
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER CTA -->
+        <div class="footer-cta">
+            <h3>Ready to Implement Enterprise Security?</h3>
+            <p>Get a dedicated AI instance deployed in your infrastructure with continuous threat detection, real-time analytics, and AI-powered recommendations.</p>
+            <button class="btn btn-primary" onclick="contactSales()">Contact Sales Team</button>
+            <p style="color: #666; font-size: 0.9rem; margin-top: 2rem;">Response within 24 hours | Enterprise Support Included</p>
+        </div>
+    </div>
+
+    <script>
+        // Load report from localStorage or session
+        function loadReport() {
+            const report = sessionStorage.getItem('pam_report');
+            if (report) {
+                document.getElementById('reportContent').innerHTML = report;
+            }
+        }
+
+        function downloadReport() {
+            const report = sessionStorage.getItem('pam_report');
+            if (!report) {
+                alert('Report not found');
+                return;
+            }
+            // In production, generate PDF from report
+            alert('PDF download would be triggered here');
+        }
+
+        function scheduleConsultation() {
+            window.location.href = 'mailto:enterprise@caiber.ca?subject=Enterprise%20AI%20Platform%20Consultation&body=I%27d%20like%20to%20schedule%20a%20consultation%20for%20the%20Enterprise%20AI%20Platform.';
+        }
+
+        function downloadDatasheet() {
+            alert('Datasheet download initiated - Check your downloads folder');
+        }
+
+        function contactSales() {
+            window.location.href = 'mailto:sales@caiber.ca?subject=Enterprise%20AI%20Platform%20Interest&body=I%27m%20interested%20in%20learning%20more%20about%20your%20Enterprise%20AI%20Platform.';
+        }
+
+        // Load report when page loads
+        window.addEventListener('load', loadReport);
+    </script>
+</body>
+</html>

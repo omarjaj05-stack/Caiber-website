@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Edit' if post else 'New' }} Post | Caiber Admin</title>
+    <link rel="stylesheet" href="/static/caiber.css">
+    <script defer src="/static/caiber-icons.js"></script>
+
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Merriweather:wght@400;700&family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@400;700&family=Roboto+Mono:wght@400;600&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(180deg, #0a0e27 0%, #0f1535 50%, #0a0e27 100%);
+            color: #e8e8e8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6; min-height: 100vh;
+        }
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.4rem 5%; border-bottom: 1px solid rgba(0,200,200,0.2);
+            background: rgba(10,14,39,0.95); backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo {
+            font-size: 1.5rem; font-weight: 900; letter-spacing: 2.5px;
+            background: linear-gradient(135deg, #00e8e8 0%, #00c8c8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .nav-link { color: #a8a8a8; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+        .nav-link:hover { color: #00e8e8; }
+        .wrap { max-width: 900px; margin: 0 auto; padding: 2.5rem 5% 5rem; }
+        h1 { font-size: 1.8rem; color: #ffffff; margin-bottom: 1.5rem; }
+        label { display: block; color: #00e8e8; font-weight: 700; font-size: 0.9rem; margin: 1.3rem 0 0.5rem; }
+        input[type=text], input[type=url] {
+            width: 100%; padding: 0.85rem 1rem;
+            background: rgba(10,14,39,0.6); border: 1.5px solid rgba(0,200,200,0.3);
+            border-radius: 10px; color: #e8e8e8; font-size: 1rem;
+        }
+        input:focus { outline: none; border-color: #00e8e8; }
+        .hint { color: #7a869c; font-size: 0.8rem; margin-top: 0.3rem; }
+        .error { color: #ff6b6b; margin-bottom: 1rem; }
+        #editor-container { background: #fdfdfd; border-radius: 0 0 10px 10px; min-height: 380px; }
+        .ql-toolbar.ql-snow {
+            background: rgba(0,200,200,0.06);
+            border: 1.5px solid rgba(0,200,200,0.3) !important;
+            border-bottom: none !important; border-radius: 10px 10px 0 0;
+        }
+        .ql-container.ql-snow {
+            border: 1.5px solid rgba(0,200,200,0.3) !important;
+            border-radius: 0 0 10px 10px; font-size: 1.05rem;
+        }
+        .ql-editor { min-height: 380px; color: #1a1a2e; line-height: 1.8; }
+        .ql-editor.ql-blank::before { color: #8a8a8a; font-style: normal; }
+        .ql-snow .ql-stroke { stroke: #2a2a3a; }
+        .ql-snow .ql-fill { fill: #2a2a3a; }
+        .ql-snow .ql-picker { color: #2a2a3a; }
+        .ql-font-inter { font-family: 'Inter', sans-serif; }
+        .ql-font-montserrat { font-family: 'Montserrat', sans-serif; }
+        .ql-font-lora { font-family: 'Lora', serif; }
+        .ql-font-merriweather { font-family: 'Merriweather', serif; }
+        .ql-font-playfair { font-family: 'Playfair Display', serif; }
+        .ql-font-robotoslab { font-family: 'Roboto Slab', serif; }
+        .ql-font-robotomono { font-family: 'Roboto Mono', monospace; }
+        .ql-snow .ql-picker.ql-font .ql-picker-label[data-value=inter]::before,
+        .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=inter]::before { content: 'Inter'; font-family: 'Inter'; }
+        .ql-snow .ql-picker.ql-font .ql-picker-label[data-value=montserrat]::before,
+        .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=montserrat]::before { content: 'Montserrat'; font-family: 'Montserrat'; }
+        .ql-snow .ql-picker.ql-font .ql-picker-label[data-value=lora]::before,
+        .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=lora]::before { content: 'Lora'; font-family: 'Lora'; }
+        .ql-snow .ql-picker.ql-font .ql-picker-label[data-value=merriweather]::before,
+        .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=merriweather]::before { content: 'Merriweather'; font-family: 'Merriweather'; }
+        .ql-snow .ql-picker.ql-font .ql-picker-label[data-value=playfair]::before,
+        .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=playfair]::before { content: 'Playfair'; font-family: 'Playfair Display'; }
+        .ql-snow .ql-picker.ql-font .ql-picker-label[data-value=robotoslab]::before,
+        .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=robotoslab]::before { content: 'Roboto Slab'; font-family: 'Roboto Slab'; }
+        .ql-snow .ql-picker.ql-font .ql-picker-label[data-value=robotomono]::before,
+        .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=robotomono]::before { content: 'Roboto Mono'; font-family: 'Roboto Mono'; }
+        .ql-snow .ql-picker.ql-font .ql-picker-label::before,
+        .ql-snow .ql-picker.ql-font .ql-picker-item::before { content: 'Sans Serif'; }
+        .btn-row { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+        .save-btn {
+            padding: 1rem 2.5rem; background: linear-gradient(135deg, #00c8c8 0%, #00e8e8 100%);
+            color: #0a0e27; border: none; border-radius: 10px; font-weight: 800;
+            font-size: 1rem; cursor: pointer; transition: all 0.3s ease;
+        }
+        .save-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,200,200,0.4); }
+        .preview-btn {
+            padding: 1rem 2rem; background: rgba(0,200,200,0.08);
+            border: 1.5px solid rgba(0,200,200,0.4); color: #00e8e8;
+            border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s ease;
+        }
+        .preview-btn:hover { background: rgba(0,200,200,0.16); }
+        .cancel-a { padding: 1rem 2rem; color: #a8a8a8; text-decoration: none; font-weight: 600;
+                    display: inline-flex; align-items: center; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+                 z-index: 500; overflow-y: auto; padding: 3rem 1rem; }
+        .modal.show { display: block; }
+        .modal-inner { max-width: 780px; margin: 0 auto; background: #0f1535;
+                       border: 1.5px solid rgba(0,200,200,0.3); border-radius: 16px; padding: 2.5rem; }
+        .modal-inner h2.pv-title { color: #fff; font-size: 2rem; margin-bottom: 1rem; }
+        .pv-content { color: #d0d0d0; font-size: 1.1rem; line-height: 1.8; }
+        .pv-content img { max-width: 100%; border-radius: 10px; margin: 1rem 0; }
+        .close-pv { float: right; background: none; border: none; color: #a8a8a8;
+                    font-size: 1.5rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">CAIBER</div>
+        <a href="/admin/dashboard" class="nav-link">Back to Dashboard</a>
+    </nav>
+
+    <div class="wrap">
+        <h1>{{ 'Edit Post' if post else 'New Post' }}</h1>
+        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+
+        <form method="POST" id="postForm">
+            <label>Title</label>
+            <input type="text" name="title" id="title" value="{{ post.title if post else '' }}"
+                   placeholder="Your post title" required>
+
+            <label>Author</label>
+            <input type="text" name="author" value="{{ post.author if post else 'Caiber' }}"
+                   placeholder="Author name">
+
+            <label>Featured image URL (optional)</label>
+            <input type="url" name="image_url" value="{{ post.image_url if post else '' }}"
+                   placeholder="https://example.com/image.jpg">
+            <div class="hint">Paste a link to an image. (Direct upload coming later.)</div>
+
+            <label>Content</label>
+
+            <div id="toolbar">
+                <span class="ql-formats">
+                    <select class="ql-font">
+                        <option selected></option>
+                        <option value="inter"></option>
+                        <option value="montserrat"></option>
+                        <option value="lora"></option>
+                        <option value="merriweather"></option>
+                        <option value="playfair"></option>
+                        <option value="robotoslab"></option>
+                        <option value="robotomono"></option>
+                    </select>
+                    <select class="ql-size">
+                        <option value="small"></option>
+                        <option selected></option>
+                        <option value="large"></option>
+                        <option value="huge"></option>
+                    </select>
+                    <select class="ql-header">
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                        <option selected></option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                </span>
+                <span class="ql-formats">
+                    <select class="ql-color"></select>
+                    <select class="ql-background"></select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                    <button class="ql-indent" value="-1"></button>
+                    <button class="ql-indent" value="+1"></button>
+                </span>
+                <span class="ql-formats">
+                    <select class="ql-align"></select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-blockquote"></button>
+                    <button class="ql-code-block"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                    <button class="ql-image"></button>
+                    <button class="ql-video"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-clean"></button>
+                </span>
+            </div>
+
+            <div id="editor-container"></div>
+
+            <input type="hidden" name="body" id="body">
+
+            <div class="btn-row">
+                <button type="submit" class="save-btn">Publish</button>
+                <button type="button" class="preview-btn" onclick="openPreview()">Preview</button>
+                <a href="/admin/dashboard" class="cancel-a">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal" id="previewModal">
+        <div class="modal-inner">
+            <button class="close-pv" onclick="closePreview()">&times;</button>
+            <h2 class="pv-title" id="pvTitle"></h2>
+            <div class="pv-content ql-editor" id="pvContent" style="padding:0;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <script>
+        var Font = Quill.import('formats/font');
+        Font.whitelist = ['inter','montserrat','lora','merriweather','playfair','robotoslab','robotomono'];
+        Quill.register(Font, true);
+
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            placeholder: 'Write your article here...',
+            modules: { toolbar: '#toolbar' }
+        });
+
+        var existing = {{ (post.body | tojson) if post else '""' }};
+        if (existing) { quill.clipboard.dangerouslyPasteHTML(existing); }
+
+        document.getElementById('postForm').addEventListener('submit', function () {
+            document.getElementById('body').value = quill.root.innerHTML;
+        });
+
+        function openPreview() {
+            document.getElementById('pvTitle').textContent = document.getElementById('title').value || '(untitled)';
+            document.getElementById('pvContent').innerHTML = quill.root.innerHTML;
+            document.getElementById('previewModal').classList.add('show');
+        }
+        function closePreview() {
+            document.getElementById('previewModal').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Caiber</title>
+    <link rel="stylesheet" href="/static/caiber.css">
+    <script defer src="/static/caiber-icons.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(180deg, #0a0e27 0%, #0f1535 50%, #0a0e27 100%);
+            color: #e8e8e8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 2rem;
+        }
+        .login-box {
+            width: 100%; max-width: 400px;
+            background: linear-gradient(135deg, rgba(0,200,200,0.08) 0%, rgba(0,200,200,0.02) 100%);
+            border: 1.5px solid rgba(0,200,200,0.3);
+            border-radius: 18px; padding: 2.8rem; text-align: center;
+        }
+        .lock-icon { color: #00e8e8; width: 48px; height: 48px; margin: 0 auto 1rem; }
+        h1 {
+            font-size: 1.6rem; font-weight: 800; color: #ffffff; margin-bottom: 0.4rem;
+        }
+        p.sub { color: #7a869c; font-size: 0.9rem; margin-bottom: 1.8rem; }
+        input {
+            width: 100%; padding: 0.9rem 1rem;
+            background: rgba(10,14,39,0.6); border: 1.5px solid rgba(0,200,200,0.3);
+            border-radius: 10px; color: #e8e8e8; font-size: 1rem; margin-bottom: 1rem;
+        }
+        input:focus { outline: none; border-color: #00e8e8; }
+        button {
+            width: 100%; padding: 0.95rem;
+            background: linear-gradient(135deg, #00c8c8 0%, #00e8e8 100%);
+            color: #0a0e27; border: none; border-radius: 10px;
+            font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,200,200,0.4); }
+        .error { color: #ff6b6b; font-size: 0.9rem; margin-bottom: 1rem; }
+        .logo {
+            font-size: 1.4rem; font-weight: 900; letter-spacing: 2.5px; margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #00e8e8 0%, #00c8c8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div class="logo">CAIBER</div>
+        <div class="lock-icon"><span class="icon" data-icon="lock" style="width:48px;height:48px;"></span></div>
+        <h1>Admin Access</h1>
+        <p class="sub">Enter your password to manage the blog.</p>
+        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+        <form method="POST">
+            <input type="password" name="password" placeholder="Password" autofocus required>
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,1 +1,89 @@
-/
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+    flex: none;
+    line-height: 1;
+}
+ 
+.icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+ 
+/* Filled-style icons (e.g. status dots) opt in with .icon--fill */
+.icon--fill svg { fill: currentColor; stroke: none; }
+ 
+/* The rounded "tile" icons used on feature/service/product cards.
+   Give the tile a fixed box and let the SVG scale to ~55% of it.          */
+.why-icon,
+.service-icon,
+.product-icon,
+.tool-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+ 
+.why-icon .icon        { width: 26px; height: 26px; color: #00e8e8; }
+.service-icon .icon    { width: 34px; height: 34px; color: #00e8e8; }
+.product-icon .icon    { width: 34px; height: 34px; color: #00e8e8; }
+.tool-card-icon .icon  { width: 40px; height: 40px; color: #00e8e8; }
+ 
+/* Inline icons that sit next to text (buttons, links, badges) */
+.icon-inline { width: 1.05em; height: 1.05em; color: currentColor; }
+ 
+/* Arrow icons in links/buttons animate on hover of the parent */
+.card-link .icon,
+.btn-arrow .icon { transition: transform 0.3s ease; }
+.card-link:hover .icon,
+a:hover > .btn-arrow .icon,
+button:hover .btn-arrow .icon { transform: translateX(4px); }
+ 
+/* Status-dot icons keep their semantic color */
+.icon--red    { color: #ff5964; }
+.icon--orange { color: #ff9f43; }
+.icon--yellow { color: #ffd93d; }
+.icon--green  { color: #00ff88; }
+ 
+/* ---- Responsive helpers -------------------------------------------------
+   Small, non-invasive utilities. They fix the common problems (horizontal
+   scroll, off-centre sections, cramped padding on phones) without changing
+   the site's visual design.                                                */
+ 
+/* Never allow sideways scrolling on any device */
+html, body { max-width: 100%; overflow-x: hidden; }
+ 
+/* A consistent centered container. Opt in with class="container". */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 3rem);
+}
+ 
+/* Cap content width on ultra-wide monitors so it doesn't stretch thin */
+@media (min-width: 1800px) {
+    .container { max-width: 1320px; }
+}
+ 
+/* Media never overflows its column */
+img, svg, video, canvas { max-width: 100%; height: auto; }
+ 
+/* Utility: perfectly centred column */
+.center-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}

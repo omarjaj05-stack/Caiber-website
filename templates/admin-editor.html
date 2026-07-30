@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Edit' if post else 'New' }} Post | Caiber Admin</title>
+    <link rel="stylesheet" href="/static/caiber.css">
+    <script defer src="/static/caiber-icons.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(180deg, #0a0e27 0%, #0f1535 50%, #0a0e27 100%);
+            color: #e8e8e8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6; min-height: 100vh;
+        }
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.4rem 5%; border-bottom: 1px solid rgba(0,200,200,0.2);
+            background: rgba(10,14,39,0.95); backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo {
+            font-size: 1.5rem; font-weight: 900; letter-spacing: 2.5px;
+            background: linear-gradient(135deg, #00e8e8 0%, #00c8c8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .nav-link { color: #a8a8a8; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+        .nav-link:hover { color: #00e8e8; }
+
+        .wrap { max-width: 850px; margin: 0 auto; padding: 2.5rem 5% 5rem; }
+        h1 { font-size: 1.8rem; color: #ffffff; margin-bottom: 1.5rem; }
+        label { display: block; color: #00e8e8; font-weight: 700; font-size: 0.9rem;
+                margin: 1.3rem 0 0.5rem; }
+        input[type=text], input[type=url] {
+            width: 100%; padding: 0.85rem 1rem;
+            background: rgba(10,14,39,0.6); border: 1.5px solid rgba(0,200,200,0.3);
+            border-radius: 10px; color: #e8e8e8; font-size: 1rem;
+        }
+        input:focus { outline: none; border-color: #00e8e8; }
+        .hint { color: #7a869c; font-size: 0.8rem; margin-top: 0.3rem; }
+        .error { color: #ff6b6b; margin-bottom: 1rem; }
+
+        /* Editor toolbar */
+        .toolbar {
+            display: flex; flex-wrap: wrap; gap: 0.4rem;
+            background: rgba(0,200,200,0.06); border: 1.5px solid rgba(0,200,200,0.3);
+            border-bottom: none; border-radius: 10px 10px 0 0; padding: 0.6rem;
+        }
+        .toolbar button {
+            background: rgba(10,14,39,0.6); border: 1px solid rgba(0,200,200,0.25);
+            color: #d0d0d0; border-radius: 7px; padding: 0.5rem 0.7rem; cursor: pointer;
+            font-size: 0.85rem; font-weight: 700; min-width: 38px; transition: all 0.2s ease;
+        }
+        .toolbar button:hover { background: rgba(0,200,200,0.15); color: #00e8e8; border-color: #00e8e8; }
+
+        .editor {
+            min-height: 320px; padding: 1.2rem;
+            background: rgba(10,14,39,0.6);
+            border: 1.5px solid rgba(0,200,200,0.3); border-top: none;
+            border-radius: 0 0 10px 10px; color: #e8e8e8; font-size: 1.05rem; line-height: 1.8;
+            overflow-y: auto;
+        }
+        .editor:focus { outline: none; }
+        .editor:empty:before { content: attr(data-placeholder); color: #5a647c; }
+        .editor h2 { color: #00e8e8; font-size: 1.6rem; margin: 1rem 0 0.6rem; }
+        .editor h3 { color: #00e8e8; font-size: 1.3rem; margin: 0.9rem 0 0.5rem; }
+        .editor blockquote { border-left: 3px solid #00e8e8; padding-left: 1rem;
+                             margin: 1rem 0; color: #a8a8a8; font-style: italic; }
+        .editor img { max-width: 100%; border-radius: 8px; margin: 0.8rem 0; }
+        .editor a { color: #00e8e8; }
+        .editor ul, .editor ol { margin-left: 1.5rem; }
+
+        .btn-row { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+        .save-btn {
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #00c8c8 0%, #00e8e8 100%);
+            color: #0a0e27; border: none; border-radius: 10px; font-weight: 800;
+            font-size: 1rem; cursor: pointer; transition: all 0.3s ease;
+        }
+        .save-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,200,200,0.4); }
+        .preview-btn {
+            padding: 1rem 2rem; background: rgba(0,200,200,0.08);
+            border: 1.5px solid rgba(0,200,200,0.4); color: #00e8e8;
+            border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s ease;
+        }
+        .preview-btn:hover { background: rgba(0,200,200,0.16); }
+        .cancel-a { padding: 1rem 2rem; color: #a8a8a8; text-decoration: none; font-weight: 600;
+                    display: inline-flex; align-items: center; }
+
+        /* Preview modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+                 z-index: 500; overflow-y: auto; padding: 3rem 1rem; }
+        .modal.show { display: block; }
+        .modal-inner { max-width: 780px; margin: 0 auto; background: #0f1535;
+                       border: 1.5px solid rgba(0,200,200,0.3); border-radius: 16px; padding: 2.5rem; }
+        .modal-inner h2.pv-title { color: #fff; font-size: 2rem; margin-bottom: 1rem; }
+        .pv-content { color: #d0d0d0; font-size: 1.1rem; line-height: 1.8; }
+        .pv-content h2 { color: #00e8e8; font-size: 1.6rem; margin: 1.2rem 0 0.6rem; }
+        .pv-content h3 { color: #00e8e8; font-size: 1.3rem; margin: 1rem 0 0.5rem; }
+        .pv-content img { max-width: 100%; border-radius: 10px; margin: 1rem 0; }
+        .pv-content blockquote { border-left: 3px solid #00e8e8; padding-left: 1rem;
+                                 color: #a8a8a8; font-style: italic; margin: 1rem 0; }
+        .close-pv { float: right; background: none; border: none; color: #a8a8a8;
+                    font-size: 1.5rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">CAIBER</div>
+        <a href="/admin/dashboard" class="nav-link">Back to Dashboard</a>
+    </nav>
+
+    <div class="wrap">
+        <h1>{{ 'Edit Post' if post else 'New Post' }}</h1>
+        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+
+        <form method="POST" id="postForm">
+            <label>Title</label>
+            <input type="text" name="title" id="title" value="{{ post.title if post else '' }}"
+                   placeholder="Your post title" required>
+
+            <label>Author</label>
+            <input type="text" name="author" value="{{ post.author if post else 'Caiber' }}"
+                   placeholder="Author name">
+
+            <label>Featured image URL (optional)</label>
+            <input type="url" name="image_url" value="{{ post.image_url if post else '' }}"
+                   placeholder="https://example.com/image.jpg">
+            <div class="hint">Paste a link to an image. (Direct upload coming later.)</div>
+
+            <label>Content</label>
+            <div class="toolbar">
+                <button type="button" onclick="fmt('bold')" title="Bold"><b>B</b></button>
+                <button type="button" onclick="fmt('italic')" title="Italic"><i>I</i></button>
+                <button type="button" onclick="fmt('formatBlock','h2')" title="Heading">H2</button>
+                <button type="button" onclick="fmt('formatBlock','h3')" title="Subheading">H3</button>
+                <button type="button" onclick="fmt('insertUnorderedList')" title="Bullet list">&bull; List</button>
+                <button type="button" onclick="fmt('insertOrderedList')" title="Numbered list">1. List</button>
+                <button type="button" onclick="fmt('formatBlock','blockquote')" title="Quote">&ldquo; Quote</button>
+                <button type="button" onclick="addLink()" title="Link">Link</button>
+                <button type="button" onclick="addImage()" title="Image in article">Image</button>
+                <button type="button" onclick="fmt('removeFormat')" title="Clear formatting">Clear</button>
+            </div>
+            <div class="editor" id="editor" contenteditable="true"
+                 data-placeholder="Write your article here...">{{ post.body | safe if post else '' }}</div>
+
+            <input type="hidden" name="body" id="body">
+
+            <div class="btn-row">
+                <button type="submit" class="save-btn" onclick="syncBody()">Publish</button>
+                <button type="button" class="preview-btn" onclick="openPreview()">Preview</button>
+                <a href="/admin/dashboard" class="cancel-a">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Preview modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-inner">
+            <button class="close-pv" onclick="closePreview()">&times;</button>
+            <h2 class="pv-title" id="pvTitle"></h2>
+            <div class="pv-content" id="pvContent"></div>
+        </div>
+    </div>
+
+    <script>
+        var editor = document.getElementById('editor');
+
+        function fmt(cmd, val) {
+            document.execCommand(cmd, false, val || null);
+            editor.focus();
+        }
+        function addLink() {
+            var url = prompt('Enter the link URL:');
+            if (url) fmt('createLink', url);
+        }
+        function addImage() {
+            var url = prompt('Enter the image URL:');
+            if (url) fmt('insertImage', url);
+        }
+        function syncBody() {
+            document.getElementById('body').value = editor.innerHTML;
+        }
+        // Ensure body is synced on submit even if button onclick is bypassed
+        document.getElementById('postForm').addEventListener('submit', syncBody);
+
+        function openPreview() {
+            document.getElementById('pvTitle').textContent = document.getElementById('title').value || '(untitled)';
+            document.getElementById('pvContent').innerHTML = editor.innerHTML;
+            document.getElementById('previewModal').classList.add('show');
+        }
+        function closePreview() {
+            document.getElementById('previewModal').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

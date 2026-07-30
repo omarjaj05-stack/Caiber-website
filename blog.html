@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} | Caiber Blog</title>
+    <link rel="stylesheet" href="/static/caiber.css">
+    <script defer src="/static/caiber-icons.js"></script>
+    <!-- Quill styles so post formatting (fonts, sizes, colors, align) renders -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Merriweather:wght@400;700&family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@400;700&family=Roboto+Mono:wght@400;600&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(180deg, #0a0e27 0%, #0f1535 50%, #0a0e27 100%);
+            color: #e8e8e8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.8; min-height: 100vh;
+        }
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.4rem 5%;
+            border-bottom: 1px solid rgba(0,200,200,0.2);
+            background: rgba(10,14,39,0.95); backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo {
+            font-size: 1.6rem; font-weight: 900; letter-spacing: 2.5px;
+            background: linear-gradient(135deg, #00e8e8 0%, #00c8c8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .back-btn {
+            padding: 0.8rem 2rem; background: rgba(0,200,200,0.1);
+            border: 1.5px solid rgba(0,200,200,0.4); color: #00e8e8;
+            border-radius: 10px; text-decoration: none; font-weight: 600;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .back-btn:hover { background: rgba(0,200,200,0.2); transform: translateX(-4px); }
+
+        .article { max-width: 800px; margin: 0 auto; padding: 3.5rem 5% 5rem; }
+        .article h1 {
+            font-size: clamp(2rem, 4.5vw, 3rem); color: #ffffff;
+            line-height: 1.2; margin-bottom: 1rem;
+        }
+        .post-meta {
+            color: #7a869c; font-size: 0.95rem; margin-bottom: 2rem;
+            display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;
+            padding-bottom: 1.5rem; border-bottom: 1px solid rgba(0,200,200,0.15);
+        }
+        .post-meta span { display: inline-flex; align-items: center; gap: 0.4rem; }
+        .featured-img { width: 100%; border-radius: 16px; margin-bottom: 2.5rem;
+                        max-height: 440px; object-fit: cover; }
+
+        /* Rendered post content */
+        .content { color: #d0d0d0; font-size: 1.1rem; }
+        .content h2 { color: #00e8e8; font-size: 1.8rem; margin: 2.2rem 0 1rem; }
+        .content h3 { color: #00e8e8; font-size: 1.4rem; margin: 1.8rem 0 0.8rem; }
+        .content p { margin-bottom: 1.3rem; }
+        .content ul, .content ol { margin: 0 0 1.3rem 1.5rem; }
+        .content li { margin-bottom: 0.5rem; }
+        .content a { color: #00e8e8; }
+        .content img { max-width: 100%; border-radius: 12px; margin: 1.5rem 0; }
+        .content blockquote {
+            border-left: 3px solid #00e8e8; padding: 0.5rem 1.5rem;
+            margin: 1.5rem 0; color: #a8a8a8; font-style: italic;
+            background: rgba(0,200,200,0.05); border-radius: 0 8px 8px 0;
+        }
+        .content strong { color: #ffffff; }
+
+        /* Quill font classes so the font picker choices render on published posts */
+        .ql-font-inter { font-family: 'Inter', sans-serif; }
+        .ql-font-montserrat { font-family: 'Montserrat', sans-serif; }
+        .ql-font-lora { font-family: 'Lora', serif; }
+        .ql-font-merriweather { font-family: 'Merriweather', serif; }
+        .ql-font-playfair { font-family: 'Playfair Display', serif; }
+        .ql-font-robotoslab { font-family: 'Roboto Slab', serif; }
+        .ql-font-robotomono { font-family: 'Roboto Mono', monospace; }
+        /* Quill size classes */
+        .content .ql-size-small { font-size: 0.8em; }
+        .content .ql-size-large { font-size: 1.5em; }
+        .content .ql-size-huge { font-size: 2.2em; }
+        /* Quill alignment classes */
+        .content .ql-align-center { text-align: center; }
+        .content .ql-align-right { text-align: right; }
+        .content .ql-align-justify { text-align: justify; }
+        /* Quill code block */
+        .content pre.ql-syntax, .content pre {
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(0,200,200,0.2);
+            border-radius: 8px; padding: 1rem; overflow-x: auto;
+            font-family: 'Roboto Mono', monospace; font-size: 0.95rem; margin: 1.5rem 0;
+        }
+
+        footer {
+            text-align: center; padding: 3rem 5%;
+            border-top: 1px solid rgba(0,200,200,0.15); color: #7a869c;
+        }
+
+        html, body { max-width: 100%; overflow-x: hidden; }
+        @media (max-width: 600px) {
+            nav { padding: 1rem 4%; }
+            .back-btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+            .article { padding: 2.2rem 5% 4rem; }
+            .featured-img { max-height: 240px; }
+            .content { font-size: 1rem; }
+            .post-meta { gap: 1rem; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">CAIBER</div>
+        <a href="/blog" class="back-btn"><span class="icon icon-inline" data-icon="arrow-left"></span> All Posts</a>
+    </nav>
+
+    <article class="article">
+        <h1>{{ post.title }}</h1>
+        <div class="post-meta">
+            <span><span class="icon icon-inline" data-icon="users"></span> {{ post.author }}</span>
+            <span><span class="icon icon-inline" data-icon="clock"></span> {{ post.date }}</span>
+        </div>
+        {% if post.image_url %}<img class="featured-img" src="{{ post.image_url }}" alt="{{ post.title }}">{% endif %}
+        <div class="content">
+            {{ post.body | safe }}
+        </div>
+    </article>
+
+    <footer>
+        <p>&copy; 2026 Caiber Enterprise PAM Solutions. All rights reserved.</p>
+    </footer>
+</body>
+</html>
